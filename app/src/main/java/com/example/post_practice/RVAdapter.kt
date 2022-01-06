@@ -2,6 +2,7 @@ package com.example.post_practice
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +20,15 @@ class RVAdapter(private var users: Users): RecyclerView.Adapter<RVAdapter.ItemVi
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val user = users[position]
+        Log.d("onBindViewHolder", "onResponse: ")
 
         holder.binding.apply {
+            Log.d("onBindViewHolder", "onResponse: ")
+
             tvName.text = user.name
             tvLocation.text = user.location
+            Log.d("onBindViewHolder", "onResponse: $user")
+
         }
     }
 
@@ -31,5 +37,7 @@ class RVAdapter(private var users: Users): RecyclerView.Adapter<RVAdapter.ItemVi
     fun update(users: Users){
         this.users = users
         notifyDataSetChanged()
+        Log.d("adapterRVM", "onResponse: $users")
+
     }
 }

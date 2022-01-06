@@ -24,12 +24,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addButton: Button
 
     private lateinit var users: Users
+    private lateinit var userItems: UsersItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         users = Users()
+        //userItems = UsersItem()
+
+        rvMain = findViewById(R.id.rvMain)
+        rvAdapter = RVAdapter(users)
+        rvMain.adapter = rvAdapter
+
 
         clMain = findViewById(R.id.clMain)
         enterName = findViewById(R.id.etName)
@@ -38,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         addButton.setOnClickListener {
             addData()
+            //displayData()
         }
 
         displayData()
@@ -65,8 +73,14 @@ class MainActivity : AppCompatActivity() {
                 try {
                     users = response.body()!!
                     rvAdapter.update(users)
+
+//                    val responseBody = response.body()!!
+//                    val userName = responseBody[users]
+//                    println("user: $users")
+                    Log.d("ADD_USER", "onResponse: $users")
                 } catch (e: Exception) {
                     Log.d("DISPLAY_DATA", "onResponse: Did not display data")
+                    Log.d("EXCEPTION", "onResponse: $e")
                 }
             }
 
