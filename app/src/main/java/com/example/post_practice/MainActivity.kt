@@ -1,5 +1,6 @@
 package com.example.post_practice
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,9 +24,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var enterName: EditText
     private lateinit var enterLocation: EditText
     private lateinit var addButton: Button
+    private lateinit var updateDeleteButton: Button
 
     private lateinit var users: Users
     private lateinit var userItems: UsersItem
+
+    val apiInterface = APIClient().getClient()?.create(APIInterface::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,18 +47,18 @@ class MainActivity : AppCompatActivity() {
         enterName = findViewById(R.id.etName)
         enterLocation = findViewById(R.id.etLocation)
         addButton = findViewById(R.id.btnAdd)
+        updateDeleteButton = findViewById(R.id.btnUpdateDelete)
 
-        addButton.setOnClickListener {
-            addData()
-            //displayData()
-        }
-
+        addButton.setOnClickListener { addData() }
         displayData()
+
+        updateDeleteButton.setOnClickListener {
+            val intentUpdateDelete = Intent(this, UpdateDeleteActivity::class.java)
+            startActivity(intentUpdateDelete)
+        }
     }
 
     private fun addData() {
-        val apiInterface = APIClient().getClient()?.create(APIInterface::class.java)
-
         apiInterface?.postUsers(UsersItem(enterName.text.toString(), enterLocation.text.toString(), 0))?.enqueue(object: Callback<UsersItem> {
             override fun onResponse(call: Call<UsersItem>, response: Response<UsersItem>) {
                 Toast.makeText(this@MainActivity, "User added", Toast.LENGTH_LONG).show()
@@ -66,17 +71,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayData() {
-        val apiInterface = APIClient().getClient()?.create(APIInterface::class.java)
-
         apiInterface?.getUsers()?.enqueue(object: Callback<Users> {
             override fun onResponse(call: Call<Users>, response: Response<Users>) {
                 try {
                     users = response.body()!!
                     rvAdapter.update(users)
-
-//                    val responseBody = response.body()!!
-//                    val userName = responseBody[users]
-//                    println("user: $users")
                     Log.d("ADD_USER", "onResponse: $users")
                 } catch (e: Exception) {
                     Log.d("DISPLAY_DATA", "onResponse: Did not display data")
